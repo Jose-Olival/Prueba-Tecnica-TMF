@@ -8,5 +8,9 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('prueba-tecnica-TMF');
+  protected logIn = signal(false)
+
+  changeLogIn(newValue: boolean): void {
+   this.logIn.set(newValue) 
+  }
 }
