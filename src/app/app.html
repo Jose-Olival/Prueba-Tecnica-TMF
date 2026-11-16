@@ -1,4 +1,4 @@
-<main class=" p-3">
+<main class="flex flex-col gap-4 p-3">
   <app-products-table (qtyChangeEvent)="calculateSummary($event)" />
   <app-summary-panel [pricingSummary]="pricingSummary()"/>
 </main>
