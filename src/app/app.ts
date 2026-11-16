@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { Filter } from './models/Filter';
+import { Category } from './models/Category';
 import { PricingSummary } from './models/PricingSummary';
 import { QtyChangeEvent } from './models/QtyChangeEvent';
 import { ProductsTable } from './components/products-table/products-table';
@@ -15,10 +15,8 @@ import { SearchBar } from './components/search-bar/search-bar';
 })
 export class App {
   protected logIn = signal(false)
-  protected filter = signal<Filter>({
-    query: 'string',
-    categoria: ''
-  })
+  protected category = signal<Category>('Todos')
+  protected query = signal<string>('')
   protected pricingSummary = signal<PricingSummary>({
     items: 0,
     unitQty:  0,
@@ -30,8 +28,13 @@ export class App {
    this.logIn.set(newValue) 
   }
 
-  changeFilter(newFilter: Filter): void {
-    this.filter.set(newFilter)
+  changeQuery(newQuery: string): void {
+    console.log(newQuery)
+    this.query.set(newQuery)
+  }
+
+  changeCategory(newCategory: Category): void {
+    this.category.set(newCategory)
   }
 
   calculateSummary({ sku, name, newQty, unitPrice }: QtyChangeEvent): void {

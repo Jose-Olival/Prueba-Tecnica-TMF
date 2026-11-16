@@ -1,9 +1,10 @@
-import { Component, inject, resource, computed, EventEmitter, Output, signal, Input } from '@angular/core';
+import { Component, inject, resource, computed, EventEmitter, Output, signal, Input, input } from '@angular/core';
 import { ProductsService } from '../../service/products.service'; 
 import { TableModule } from 'primeng/table';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { Sku } from '../../models/Product';
 import { QtyChangeEvent } from '../../models/QtyChangeEvent';
+import { Category } from '../../models/Category';
 
 @Component({
   selector: 'app-products-table',
@@ -13,6 +14,8 @@ import { QtyChangeEvent } from '../../models/QtyChangeEvent';
 })
 export class ProductsTable {
   @Input() logIn = false
+  category = input<Category>('Todos');
+  query = input<string>('')
   @Output() qtyChangeEvent = new EventEmitter<QtyChangeEvent>()
   protected readonly headers = ['SKU', 'Nombre', 'Marca', 'Categoría', 'Stock disponible', 'Pedido Mínimo', 'Tiers', 'Cantidad']
   productsService = inject(ProductsService)
@@ -22,9 +25,19 @@ export class ProductsTable {
   });
 
   protected products = computed(() => {
-    console.log(this.productsResource.value() ?? [])
-    return this.productsResource.value() ?? []
-  });
+    const all = this.productsResource.value() ?? [];
+    const q = this.query().trim().toLowerCase();
+    const category = this.category();
+
+    return all.filter(product => {
+      if (category !== 'Todos' && product.category !== category) return false;
+      if (q) {
+        const haystack = `${product.sku} ${product.name}`.toLowerCase();
+        if (!haystack.includes(q)) return false;
+      }
+      return true;
+    });
+  })
 
   qtyChange(sku: Sku, newQty: number | null) : void {
     if (newQty === null) return

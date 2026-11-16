@@ -1,6 +1,18 @@
 <p-toolbar styleClass="gap-10">
-  <input pInputText class="w-full flex-1" />
+  <input pInputText
+    class="w-full flex-1"
+    [ngModel]="query()"
+    (ngModelChange)="onQueryChange($event)"
+  />
+
   <p-select
+    styleClass="w-45"
+    [ngModel]="category()"
+    [options]="Categories"
+    (onChange)="onCategoryChange($event.value)"
+  />
+
+  <p-select 
     [(ngModel)]="selectedUserType"
     [options]="userTypes"
     optionLabel="name"
