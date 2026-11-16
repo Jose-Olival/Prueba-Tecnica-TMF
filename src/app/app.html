@@ -16,6 +16,7 @@
   />
   <app-summary-modal
     [visible]="summaryModalVisible()"
+    [pricingSummary]="pricingSummary()"
     (visibleChange)="summaryModalVisible.set($event)"
   />
 </main>
