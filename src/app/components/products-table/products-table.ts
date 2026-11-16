@@ -5,10 +5,11 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { Sku } from '../../models/Product';
 import { QtyChangeEvent } from '../../models/QtyChangeEvent';
 import { Category } from '../../models/Category';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-products-table',
-  imports: [TableModule, InputNumberModule],
+  imports: [TableModule, InputNumberModule, ButtonModule],
   templateUrl: './products-table.html',
   styles: ``,
 })
@@ -16,7 +17,10 @@ export class ProductsTable {
   @Input() logIn = false
   category = input<Category>('Todos');
   query = input<string>('')
+
   @Output() qtyChangeEvent = new EventEmitter<QtyChangeEvent>()
+  @Output() resetFiltersEvent = new EventEmitter<void>();
+
   protected readonly headers = ['SKU', 'Nombre', 'Marca', 'Categoría', 'Stock disponible', 'Pedido Mínimo', 'Tiers', 'Cantidad', 'Subtotal']
   productsService = inject(ProductsService)
   protected qtyAlerts = signal<Record<string, string | null>>({});
@@ -100,5 +104,9 @@ export class ProductsTable {
       if ((current[sku] ?? null) === message) return current;
       return { ...current, [sku]: message };
     });
+  }
+
+  resetFilters(): void {
+    this.resetFiltersEvent.emit();
   }
 }

@@ -9,6 +9,7 @@
     [category]="category()"
     [logIn]="logIn()"
     (qtyChangeEvent)="calculateSummary($event)"
+    (resetFiltersEvent)="resetFilters()"
   />
   <app-summary-panel
     [pricingSummary]="pricingSummary()"

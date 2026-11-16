@@ -39,6 +39,11 @@ export class App {
     this.category.set(newCategory)
   }
 
+  resetFilters(): void {
+    this.query.set('');
+    this.category.set('Todos');
+  }
+
   calculateSummary({ sku, name, newQty, unitPrice }: QtyChangeEvent): void {
   this.pricingSummary.update(summary => {
     const itemId = summary.details.findIndex(item => item.sku === sku);

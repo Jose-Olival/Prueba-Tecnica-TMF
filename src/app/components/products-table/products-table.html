@@ -5,7 +5,6 @@
 >
   <ng-template #loading>
     <div class="flex items-center gap-2">
-      <i class="pi pi-spin pi-spinner"></i>
       <span>Cargando productos...</span>
     </div>
   </ng-template>
@@ -54,6 +53,16 @@
       </td>
       <td class="text-right">
         {{ subTotal(product.sku) }}$
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template #emptymessage>
+    <tr>
+      <td colspan="9" class="text-center p-4">
+        <p class="mb-3">No se encontraron productos con los filtros actuales.</p>
+        <p-button (onClick)="resetFilters()">
+          Limpiar filtros
+        </p-button>
       </td>
     </tr>
   </ng-template>
