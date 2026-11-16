@@ -13,9 +13,9 @@
       <td>{{ product.name }}</td>
       <td>{{ product.brand }}</td>
       <td>{{ product.category }}</td>
-      <td>{{ product.stock }}</td>
-      <td>{{ product.moq }}</td>
-      <td>
+      <td class="text-center">{{ product.stock }}</td>
+      <td class="text-center">{{ product.moq }}</td>
+      <td class="min-w-96">
         <ol>
           @for (tier of product.tiers; track $index) {
             <li>
@@ -29,8 +29,8 @@
           }
         </ol>
       </td>
-      <td>
-        <p-inputnumber />
+      <td class="w-4" >
+        <p-inputnumber inputStyleClass="w-24"/>
       </td>
     </tr>
   </ng-template>
