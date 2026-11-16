@@ -1,69 +1,66 @@
-<p-table
-  [value]="products()"
-  [loading]="isLoading()"
-  [tableStyle]="{ 'min-width': '50rem' }"
->
-  <ng-template #loading>
-    <div class="flex items-center gap-2">
-      <span>Cargando productos...</span>
-    </div>
-  </ng-template>
-  <ng-template #header>
-    <tr>
-      @for (header of headers; track header) {
-      <th>{{ header }}</th>
-      }
-    </tr>
-  </ng-template>
-
-  <ng-template #body let-product>
-    <tr [class.bg-mist-800]="(quantities()[product.sku] ?? 0) > 0">
-      <td>{{ product.sku }}</td>
-      <td>{{ product.name }}</td>
-      <td>{{ product.brand }}</td>
-      <td>{{ product.category }}</td>
-      <td class="text-center">{{ product.stock }}</td>
-      <td class="text-center">{{ product.moq }}</td>
-      <td class="min-w-96">
-        @if (logIn) {
-        <ol>
-          @for (tier of product.tiers; track $index) {
-          <li>
-            <span class="font-bold">Tier {{ $index + 1 }}</span>
-            Min: {{ tier.minQty }} -
-            @if (tier.maxQty !== null) {
-            Max: {{ tier.maxQty }} -
+@if (isLoading()) {
+  <div class="flex items-center gap-2 p-4 bg-mist-900">
+    <span class="text-center">Cargando productos...</span>
+  </div>
+} @else {
+  <p-table [value]="products()" [loading]="isLoading()" [tableStyle]="{ 'min-width': '50rem' }">
+    <ng-template #header>
+      <tr class="bg-mist-950">
+        @for (header of headers; track header) {
+        <th>{{ header }}</th>
+        }
+      </tr>
+    </ng-template>
+    <ng-template #body let-product>
+      <tr [class.bg-mist-800]="(quantities()[product.sku] || 0) > 0"
+        [class.bg-mist-900]="(quantities()[product.sku] || 0) === 0">
+        <td>{{ product.sku }}</td>
+        <td>{{ product.name }}</td>
+        <td>{{ product.brand }}</td>
+        <td>{{ product.category }}</td>
+        <td class="text-center">{{ product.stock }}</td>
+        <td class="text-center">{{ product.moq }}</td>
+        <td class="min-w-96">
+          @if (logIn) {
+          <ol>
+            @for (tier of product.tiers; track $index) {
+            <li>
+              <span class="font-bold">Tier {{ $index + 1 }}</span>
+              Min: {{ tier.minQty }} -
+              @if (tier.maxQty !== null) {
+              Max: {{ tier.maxQty }} -
+              }
+              Precio c/u: {{ tier.unitPrice }}$
+            </li>
             }
-            Precio c/u: {{ tier.unitPrice }}$
-          </li>
+          </ol>
+          } @else {
+          Inicia sesión para ver precios mayoristas
           }
-        </ol>
-        } @else {
-        Inicia sesión para ver precios mayoristas
-        }
-      </td>
-      <td class="w-4">
-        <p-inputnumber (onInput)="qtyChange(product.sku, $event.value)" [min]="0" fluid [showButtons]="true"
-          inputStyleClass="w-24" />
-        @if (qtyAlerts()[product.sku]) {
-        <small class="text-red-500 block mt-1">
-          {{ qtyAlerts()[product.sku] }}
-        </small>
-        }
-      </td>
-      <td class="text-right">
-        {{ subTotal(product.sku) }}$
-      </td>
-    </tr>
-  </ng-template>
-  <ng-template #emptymessage>
-    <tr>
-      <td colspan="9" class="text-center p-4">
-        <p class="mb-3">No se encontraron productos con los filtros actuales.</p>
-        <p-button (onClick)="resetFilters()">
-          Limpiar filtros
-        </p-button>
-      </td>
-    </tr>
-  </ng-template>
-</p-table>
+        </td>
+        <td class="w-4">
+          <p-inputnumber (onInput)="qtyChange(product.sku, $event.value)" [min]="0" fluid [showButtons]="true"
+            inputStyleClass="w-24" />
+          @if (qtyAlerts()[product.sku]) {
+          <small class="text-red-500 block mt-1">
+            {{ qtyAlerts()[product.sku] }}
+          </small>
+          }
+        </td>
+        <td class="text-right">
+          {{ subTotal(product.sku) }}$
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="9" class="text-center p-4">
+          <p class="mb-3">No se encontraron productos con los filtros actuales.</p>
+          <p-button (onClick)="resetFilters()">
+            Limpiar filtros
+          </p-button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+}
