@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { Filter } from './models/Filter';
 import { PricingSummary } from './models/PricingSummary';
 import { ProductsTable } from './components/products-table/products-table';
-import { Sku } from './models/Product';
+import { QtyChangeEvent } from './models/QtyChangeEvent';
 
 @Component({
   selector: 'app-root',
@@ -31,7 +31,7 @@ export class App {
     this.filter.set(newFilter)
   }
 
-  calculateSummary(sku: Sku, name: string, newQty: number, unitPrice: number): void {
+  calculateSummary({sku, name, newQty, unitPrice}: QtyChangeEvent): void {
     const itemId = this.pricingSummary().details.findIndex(item => item.sku === sku)
     const itemPrice = unitPrice * newQty
     if (itemId === -1){

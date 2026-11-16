@@ -30,7 +30,18 @@
         </ol>
       </td>
       <td class="w-4" >
-        <p-inputnumber inputStyleClass="w-24"/>
+        <p-inputnumber
+          (onInput)="qtyChange(product.sku, $event.value)"
+          [min]="0"
+          fluid
+          [showButtons]="true"
+          inputStyleClass="w-24"
+        />
+        @if (qtyAlerts()[product.sku]) {
+          <small class="text-red-500 block mt-1">
+            {{ qtyAlerts()[product.sku] }}
+          </small>
+        }
       </td>
     </tr>
   </ng-template>
