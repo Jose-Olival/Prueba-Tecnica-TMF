@@ -33,44 +33,50 @@ export class App {
     this.filter.set(newFilter)
   }
 
-  calculateSummary({sku, name, newQty, unitPrice}: QtyChangeEvent): void {
-    console.log('calcular resumen de cotizacion')
-    const itemId = this.pricingSummary().details.findIndex(item => item.sku === sku)
-    const itemPrice = unitPrice * newQty
-    if (itemId === -1){
-      // El item no esta, hay que agregarlo
-      this.pricingSummary.update(summary => Object({
+  calculateSummary({ sku, name, newQty, unitPrice }: QtyChangeEvent): void {
+  this.pricingSummary.update(summary => {
+    const itemId = summary.details.findIndex(item => item.sku === sku);
+    const itemPrice = unitPrice * newQty;
+
+    //El item no existe, hay que agregarlo
+    if (itemId === -1) {
+      return {
         items: summary.items + 1,
         unitQty: summary.unitQty + newQty,
         totalPrice: summary.totalPrice + itemPrice,
-        details: summary.details.concat({
-          sku,
-          name,
-          unitPrice,
-          qty: newQty,
-          price: itemPrice, 
-        }),
-      }))
-      return 
+        details: [
+          ...summary.details,
+          { sku, name, unitPrice, qty: newQty, price: itemPrice },
+        ],
+      };
     }
-    //Calcular las diferencias y modificar el de
-    const qtyDiference = newQty - this.pricingSummary().details[itemId].qty 
-    const priceDiference = itemPrice - this.pricingSummary().details[itemId].price 
 
-    console.log(this.pricingSummary().unitQty + qtyDiference)
-    console.log(this.pricingSummary().totalPrice + priceDiference)
-    
-    this.pricingSummary.update(summary => Object({
+    const item = summary.details[itemId];
+
+    //El item debe removerse
+    if (newQty === 0) {
+      return {
+        items: summary.items - 1,
+        unitQty: summary.unitQty - item.qty,
+        totalPrice: summary.totalPrice - item.price,
+        details: summary.details.filter((_, i) => i !== itemId),
+      };
+    }
+
+    //Actualizar cantidad/precio
+    const qtyDiference = newQty - item.qty;
+    const priceDiference = itemPrice - item.price;
+
+    return {
       ...summary,
       unitQty: summary.unitQty + qtyDiference,
       totalPrice: summary.totalPrice + priceDiference,
-      details: summary.details.splice(itemId, 1,{
-        sku,
-        name,
-        unitPrice,
-        qty: newQty,
-        price: itemPrice, 
-      }),
-    }))    
-  }
+      details: summary.details.map((it, i) =>
+        i === itemId
+          ? { sku, name, unitPrice, qty: newQty, price: itemPrice }
+          : it
+      ),
+    };
+  });
+}
 }
