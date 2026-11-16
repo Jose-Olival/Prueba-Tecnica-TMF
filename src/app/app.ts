@@ -1,6 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { Filter } from './models/Filter';
 import { RouterOutlet } from '@angular/router';
+import { PricingSummary } from './models/PricingSummary';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +15,12 @@ export class App {
     query: 'string',
     categoria: ''
   })
+  protected pricingSummary = signal<PricingSummary>({
+    items: 0,
+    unitQty:  0,
+    totalPrice: 0,
+    details: []
+  })
 
   changeLogIn(newValue: boolean): void {
    this.logIn.set(newValue) 
@@ -21,5 +28,40 @@ export class App {
 
   changeFilter(newFilter: Filter): void {
     this.filter.set(newFilter)
+  }
+
+  calculateSummary(name: string, newQty: number, unitPrice: number): void {
+    const itemId = this.pricingSummary().details.findIndex(item => item.name === name)
+    const itemPrice = unitPrice * newQty
+    if (itemId === -1){
+      // El item no esta, hay que agregarlo
+      this.pricingSummary.update(summary => Object({
+        items: summary.items + 1,
+        unitQty: summary.unitQty + newQty,
+        totalPrice: summary.totalPrice + itemPrice,
+        details: summary.details.concat({
+          name,
+          unitPrice,
+          qty: newQty,
+          price: itemPrice, 
+        }),
+      }))
+      return 
+    }
+    //Calcular las diferencias y modificar el de
+    const qtyDiference = newQty - this.pricingSummary().details[itemId].qty 
+    const priceDiference = itemPrice - this.pricingSummary().details[itemId].price 
+    
+    this.pricingSummary.update(summary => Object({
+      ...summary,
+      unitQty: summary.unitQty + qtyDiference,
+      totalPrice: summary.totalPrice + priceDiference,
+      details: summary.details.splice(itemId, 1,{
+        name,
+        unitPrice,
+        qty: newQty,
+        price: itemPrice, 
+      }),
+    }))    
   }
 }
