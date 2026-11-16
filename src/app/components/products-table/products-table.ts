@@ -1,4 +1,4 @@
-import { Component, inject, resource, computed, EventEmitter, Output, signal } from '@angular/core';
+import { Component, inject, resource, computed, EventEmitter, Output, signal, Input } from '@angular/core';
 import { ProductsService } from '../../service/products.service'; 
 import { TableModule } from 'primeng/table';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -12,6 +12,7 @@ import { QtyChangeEvent } from '../../models/QtyChangeEvent';
   styles: ``,
 })
 export class ProductsTable {
+  @Input() logIn = false
   @Output() qtyChangeEvent = new EventEmitter<QtyChangeEvent>()
   protected readonly headers = ['SKU', 'Nombre', 'Marca', 'Categoría', 'Stock disponible', 'Pedido Mínimo', 'Tiers', 'Cantidad']
   productsService = inject(ProductsService)
