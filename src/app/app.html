@@ -1,9 +1,21 @@
 <main class="flex flex-col gap-4 p-3">
-  <app-search-bar 
-    (changeLogInEvent)="changeLogIn($event)" 
-    (changeQueryEvent)="changeQuery($event)" 
+  <app-search-bar
+    (changeLogInEvent)="changeLogIn($event)"
+    (changeQueryEvent)="changeQuery($event)"
     (changeCategoryEvent)="changeCategory($event)"
   />
-  <app-products-table query="{{query()}}" [category]="category()" [logIn]="logIn()" (qtyChangeEvent)="calculateSummary($event)" />
-  <app-summary-panel [pricingSummary]="pricingSummary()"/>
+  <app-products-table
+    [query]="query()"
+    [category]="category()"
+    [logIn]="logIn()"
+    (qtyChangeEvent)="calculateSummary($event)"
+  />
+  <app-summary-panel
+    [pricingSummary]="pricingSummary()"
+    (openSummaryEvent)="openSummaryModal()"
+  />
+  <app-summary-modal
+    [visible]="summaryModalVisible()"
+    (visibleChange)="summaryModalVisible.set($event)"
+  />
 </main>

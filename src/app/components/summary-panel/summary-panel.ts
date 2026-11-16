@@ -1,11 +1,13 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { PanelModule } from 'primeng/panel';
 import { DividerModule } from 'primeng/divider';
 import { PricingSummary } from '../../models/PricingSummary';
+import { ButtonDirective } from 'primeng/button';
+
 
 @Component({
   selector: 'app-summary-panel',
-  imports: [PanelModule, DividerModule],
+  imports: [PanelModule, DividerModule, ButtonDirective],
   templateUrl: './summary-panel.html',
   styles: ``,
 })
@@ -16,5 +18,9 @@ export class SummaryPanel {
     totalPrice: 0,
     details: []
   }
-}
-// el total de ítems, total de unidades, monto total en USD y botón 'Generar Solicitud de Cotización' 
+  @Output() openSummaryEvent = new EventEmitter<void>();
+
+  openModal(){
+    this.openSummaryEvent.emit()
+  }
+} 
