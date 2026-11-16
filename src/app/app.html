@@ -1,3 +1,4 @@
 <main class=" p-3">
   <app-products-table (qtyChangeEvent)="calculateSummary($event)" />
+  <app-summary-panel [pricingSummary]="pricingSummary()"/>
 </main>

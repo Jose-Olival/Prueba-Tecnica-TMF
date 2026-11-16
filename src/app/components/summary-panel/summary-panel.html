@@ -1,0 +1,22 @@
+<div class="flex justify-center">
+  <p-panel header="Resumen de Cotización" class="max-w-xs w-full" [toggleable]="true">
+    <div class="flex flex-col text-sm">
+      <div class="flex justify-between">
+        <span class="text-muted-color">Total de Ítems</span>
+        <span class="text-color font-medium">{{ pricingSummary.items }}</span>
+      </div>
+      <div class="flex justify-between mt-3">
+        <span class="text-muted-color">Total de Unidades</span>
+        <span class="text-color font-medium">{{ pricingSummary.unitQty }}</span>
+      </div>
+      <p-divider />
+      <div class="flex justify-between">
+        <span class="text-color font-semibold">Total</span>
+        <span class="text-color font-semibold">{{ pricingSummary.totalPrice }}$</span>
+      </div>
+      <div class="flex">
+        <button>placeholder</button>
+      </div>
+    </div>
+  </p-panel>
+</div>

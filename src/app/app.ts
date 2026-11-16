@@ -1,12 +1,14 @@
 import { Component, signal } from '@angular/core';
 import { Filter } from './models/Filter';
 import { PricingSummary } from './models/PricingSummary';
-import { ProductsTable } from './components/products-table/products-table';
 import { QtyChangeEvent } from './models/QtyChangeEvent';
+import { ProductsTable } from './components/products-table/products-table';
+import { SummaryPanel } from './components/summary-panel/summary-panel';
+
 
 @Component({
   selector: 'app-root',
-  imports: [ProductsTable],
+  imports: [ProductsTable, SummaryPanel],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -32,6 +34,7 @@ export class App {
   }
 
   calculateSummary({sku, name, newQty, unitPrice}: QtyChangeEvent): void {
+    console.log('calcular resumen de cotizacion')
     const itemId = this.pricingSummary().details.findIndex(item => item.sku === sku)
     const itemPrice = unitPrice * newQty
     if (itemId === -1){
@@ -53,6 +56,9 @@ export class App {
     //Calcular las diferencias y modificar el de
     const qtyDiference = newQty - this.pricingSummary().details[itemId].qty 
     const priceDiference = itemPrice - this.pricingSummary().details[itemId].price 
+
+    console.log(this.pricingSummary().unitQty + qtyDiference)
+    console.log(this.pricingSummary().totalPrice + priceDiference)
     
     this.pricingSummary.update(summary => Object({
       ...summary,
