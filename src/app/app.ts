@@ -2,6 +2,7 @@ import { Component, signal } from '@angular/core';
 import { Filter } from './models/Filter';
 import { PricingSummary } from './models/PricingSummary';
 import { ProductsTable } from './components/products-table/products-table';
+import { Sku } from './models/Product';
 
 @Component({
   selector: 'app-root',
@@ -30,8 +31,8 @@ export class App {
     this.filter.set(newFilter)
   }
 
-  calculateSummary(name: string, newQty: number, unitPrice: number): void {
-    const itemId = this.pricingSummary().details.findIndex(item => item.name === name)
+  calculateSummary(sku: Sku, name: string, newQty: number, unitPrice: number): void {
+    const itemId = this.pricingSummary().details.findIndex(item => item.sku === sku)
     const itemPrice = unitPrice * newQty
     if (itemId === -1){
       // El item no esta, hay que agregarlo
@@ -40,6 +41,7 @@ export class App {
         unitQty: summary.unitQty + newQty,
         totalPrice: summary.totalPrice + itemPrice,
         details: summary.details.concat({
+          sku,
           name,
           unitPrice,
           qty: newQty,
@@ -57,6 +59,7 @@ export class App {
       unitQty: summary.unitQty + qtyDiference,
       totalPrice: summary.totalPrice + priceDiference,
       details: summary.details.splice(itemId, 1,{
+        sku,
         name,
         unitPrice,
         qty: newQty,
