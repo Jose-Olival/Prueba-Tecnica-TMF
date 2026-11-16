@@ -4,11 +4,12 @@ import { PricingSummary } from './models/PricingSummary';
 import { QtyChangeEvent } from './models/QtyChangeEvent';
 import { ProductsTable } from './components/products-table/products-table';
 import { SummaryPanel } from './components/summary-panel/summary-panel';
+import { SearchBar } from './components/search-bar/search-bar';
 
 
 @Component({
   selector: 'app-root',
-  imports: [ProductsTable, SummaryPanel],
+  imports: [SearchBar, ProductsTable, SummaryPanel],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -75,8 +76,8 @@ export class App {
         i === itemId
           ? { sku, name, unitPrice, qty: newQty, price: itemPrice }
           : it
-      ),
-    };
-  });
-}
+        ),
+      };
+    });
+  }
 }
