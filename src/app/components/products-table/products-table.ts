@@ -17,7 +17,7 @@ export class ProductsTable {
   category = input<Category>('Todos');
   query = input<string>('')
   @Output() qtyChangeEvent = new EventEmitter<QtyChangeEvent>()
-  protected readonly headers = ['SKU', 'Nombre', 'Marca', 'Categoría', 'Stock disponible', 'Pedido Mínimo', 'Tiers', 'Cantidad']
+  protected readonly headers = ['SKU', 'Nombre', 'Marca', 'Categoría', 'Stock disponible', 'Pedido Mínimo', 'Tiers', 'Cantidad', 'Subtotal']
   productsService = inject(ProductsService)
   protected qtyAlerts = signal<Record<string, string | null>>({});
   protected productsResource = resource({
@@ -39,40 +39,58 @@ export class ProductsTable {
     });
   })
 
-  qtyChange(sku: Sku, newQty: number | null) : void {
-    if (newQty === null) return
-    const productId = this.products().findIndex(product => product.sku === sku)
-    if (productId === -1){
-      console.log(sku) //esto no deberia pasar en condiciones normales
-      return //lanzar la alerta y decirle a App que haga como si el item fuera cantidad 0
-    }
-    const product = this.products()[productId]
-    if (newQty < product.moq){
-      this.setAlert(sku, `La cantidad mínima es ${product.moq}`);
-      this.qtyChangeEvent.emit({
-        sku,
-        name: product.name,
-        newQty: 0,
-        unitPrice: 0,
-      });
-      return
-    }
+  protected quantities = signal<Record<string, number>>({});
+
+  protected subTotal(sku: Sku): number {
+    const qty = this.quantities()[sku] ?? 0;
+    if (qty <= 0) return 0;
+
+    const product = this.products().find(p => p.sku === sku);
+    if (!product) return 0;
+
     const tierIndex = product.tiers.findIndex(tier => {
-      if (newQty < tier.minQty) return false
-      if (tier.maxQty === null) return true
-      if (newQty <= tier.maxQty) return true
-      return false      
-    })
-    const unitPrice = product.tiers[tierIndex].unitPrice
+      if (qty < tier.minQty) return false;
+      if (tier.maxQty === null) return true;
+      if (qty <= tier.maxQty) return true;
+      return false;
+    });
+
+    const unitPrice = tierIndex === -1 ? 0 : product.tiers[tierIndex].unitPrice;
+    return unitPrice * qty;
+  }
+
+  qtyChange(sku: Sku, newQty: number | null): void {
+    if (newQty === null) return;
+
+    // Guardamos la cantidad (0 si es inválida)
+    const safeQty = newQty > 0 ? newQty : 0;
+    this.quantities.update(current => ({ ...current, [sku]: safeQty }));
+
+    const productId = this.products().findIndex(product => product.sku === sku);
+    if (productId === -1) {
+      console.log(sku);
+      return;
+    }
+
+    const product = this.products()[productId];
+
+    if (newQty < product.moq) {
+      this.setAlert(sku, `La cantidad mínima es ${product.moq}`);
+      this.qtyChangeEvent.emit({ sku, name: product.name, newQty: 0, unitPrice: 0 });
+      return;
+    }
 
     this.setAlert(sku, null);
 
-    this.qtyChangeEvent.emit({
-      sku,
-      name: product.name,
-      newQty,
-      unitPrice,
+    const tierIndex = product.tiers.findIndex(tier => {
+      if (newQty < tier.minQty) return false;
+      if (tier.maxQty === null) return true;
+      if (newQty <= tier.maxQty) return true;
+      return false;
     });
+    const unitPrice = tierIndex === -1 ? 0 : product.tiers[tierIndex].unitPrice;
+
+    this.qtyChangeEvent.emit({ sku, name: product.name, newQty, unitPrice });
   }
   
   private setAlert(sku: Sku, message: string | null): void {
