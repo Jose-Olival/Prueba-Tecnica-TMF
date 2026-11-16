@@ -1,6 +1,8 @@
+export type Sku = `${string}-${string}-${string}`;
+
 export interface Product {
   id:       string;
-  sku:      string;
+  sku:      Sku;
   name:     string;
   brand:    string;
   category: string;
