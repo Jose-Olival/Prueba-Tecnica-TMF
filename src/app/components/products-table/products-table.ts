@@ -41,6 +41,8 @@ export class ProductsTable {
 
   protected quantities = signal<Record<string, number>>({});
 
+  protected isLoading = computed(() => this.productsResource.isLoading());
+
   protected subTotal(sku: Sku): number {
     const qty = this.quantities()[sku] ?? 0;
     if (qty <= 0) return 0;
